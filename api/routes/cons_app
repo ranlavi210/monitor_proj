@@ -1,0 +1,110 @@
+var express = require('express');
+const { json } = require('express/lib/response');
+var router =express.Router();
+
+router.get("/", function(req, res, next){  // work when client side request the data
+    res.send(JSON.stringify(data_to_send));
+});
+
+//-----------------------------------
+
+var readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
+
+var temp_Alt, temp_HIS, temp_AID;
+var data_to_send = {Alt2send:0, HIS2send:0, AID2send:0};
+
+read_Alt();
+
+function read_Alt()
+{
+    readline.question("\nplease insert Altitude:", alt => {
+        if(alt < 0 || alt > 3000 || !(isNumber(alt)))
+        {
+            console.log("invalid alt! try again");
+            read_Alt();
+        }                    
+        else      
+        {
+            temp_Alt = alt;
+            read_HIS();
+        }        
+    });
+}
+function read_HIS()
+{
+    readline.question("\nplease insert HIS:", HIS => {
+        if(HIS < 0 || HIS > 360 || !(isNumber(HIS)))
+        {
+            console.log("invalid HIS! try again");
+            read_HIS();
+        }                    
+        else
+        {
+            temp_HIS = HIS;
+            read_AID();
+        }
+    });
+}
+    
+function read_AID()
+{
+    readline.question("\nplease insert AID:", AID => {
+        if(AID < -100 || AID > 100 || !(isNumber(AID)))
+        {
+            console.log("invalid AID! try again");
+            read_AID();
+        }                    
+        else
+        {
+            temp_AID = AID;
+            input_end();
+        }
+    });
+}        
+     
+function input_end()
+{
+    console.log("press any key to cont");
+    process.stdin.once('data', function () {
+        data_to_send.Alt2send = temp_Alt;
+        data_to_send.AID2send = temp_AID;
+        data_to_send.HIS2send = temp_HIS;
+        console.log("\n>Sending Data...");
+        do_you_want_to_continue();   
+    });
+}
+
+function do_you_want_to_continue()
+{
+    readline.question("\Do you want to continue(y/n)?", key => {
+        if(key == 'y')
+            read_Alt();
+        else if(key == 'n'){
+            readline.close();
+            process.exit();
+        }
+        else
+            do_you_want_to_continue();
+    }); 
+}
+
+function isNumber(char) // check if the string i got from user is number or not
+{  
+    if (typeof char !== 'string') {
+      return false;
+    }
+  
+    if (char.trim() === '') {
+      return false;
+    }
+  
+    return !isNaN(char);
+}
+  
+  
+
+
+module.exports = router;

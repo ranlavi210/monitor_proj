@@ -5,8 +5,6 @@ var router =express.Router();
 router.get("/", function(req, res, next){  // work when client side request the data
     res.send(JSON.stringify(data_to_send));
 });
-//check
-//check2
 
 //-----------------------------------
 
